@@ -2,6 +2,7 @@
 # requires-python = ">=3.13"
 # dependencies = [
 #     "boto3>=1.35",
+#     "python-dotenv>=1.0",
 # ]
 # ///
 import os
@@ -11,12 +12,15 @@ from pathlib import Path
 
 import boto3
 from botocore.client import Config
+from dotenv import find_dotenv, load_dotenv
 
-ENDPOINT = "http://localhost:63778"
-BUCKET = "test1"
+load_dotenv(find_dotenv())
+
+ENDPOINT = os.getenv("S3_ENDPOINT", "http://localhost:63778")
+BUCKET = os.getenv("S3_BENCH_BUCKET", "test1")
 ACCESS_KEY = os.environ["RUSTFS_ACCESS_KEY"]
 SECRET_KEY = os.environ["RUSTFS_SECRET_KEY"]
-REGION = "us-east-1"
+REGION = os.getenv("S3_REGION", "us-east-1")
 
 TEST_SIZES = [
     (5 * 1024 * 1024, "5 MB", "s3-bench-5mb.bin"),

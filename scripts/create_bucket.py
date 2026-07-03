@@ -2,6 +2,7 @@
 # requires-python = ">=3.13"
 # dependencies = [
 #     "boto3>=1.35",
+#     "python-dotenv>=1.0",
 #     "requests>=2.31",
 # ]
 # ///
@@ -19,9 +20,12 @@ from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.client import Config
 from botocore.credentials import Credentials
+from dotenv import find_dotenv, load_dotenv
 
-DEFAULT_ENDPOINT = "http://rustfs-server:9000"
-DEFAULT_REGION = "us-east-1"
+load_dotenv(find_dotenv())
+
+DEFAULT_ENDPOINT = os.getenv("S3_ADMIN_ENDPOINT", "http://rustfs-server:9000")
+DEFAULT_REGION = os.getenv("S3_REGION", "us-east-1")
 DEFAULT_ADMIN_ACCESS_KEY = os.environ["RUSTFS_ACCESS_KEY"]
 DEFAULT_ADMIN_SECRET_KEY = os.environ["RUSTFS_SECRET_KEY"]
 
