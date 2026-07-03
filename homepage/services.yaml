@@ -1,0 +1,29 @@
+- Tools:
+    - S3 Browser:
+        icon: mdi-folder-open-outline
+        href: http://trustnas/s3ui/
+        description: Client-side S3 bucket browser. Login with your RustFS IAM access key and secret key to browse and download files from your buckets.
+        container: p2p-nginx
+
+- Bandwidth Limiting:
+    - S3 Gateway:
+        icon: si-nginx
+        href: https://trustnas:63778
+        description: Bandwidth-limited S3 reverse proxy (50 Mbps / 6.1 MB/s cap). Routes S3 traffic via Tailscale → RustFS.
+        container: p2p-nginx
+    - S3 Bandwidth Benchmark:
+        icon: mdi-speedometer
+        href: http://p2p-nginx:80
+        description: "Script that uploads 5 MB + 50 MB test files then downloads them through nginx to verify the rate limit. Run: `uv run scripts/s3_bench.py`."
+
+- Storage Engine:
+    - RustFS S3 API:
+        icon: si-amazons3
+        href: http://rustfs-server:9000
+        description: S3-compatible object storage endpoint. 2.3x faster than MinIO for 4KB payloads. Bucket versioning, replication, event notifications, and lifecycle management.
+        container: rustfs-server
+    - RustFS Console:
+        icon: mdi-monitor-dashboard
+        href: http://rustfs-server:9001
+        description: Web-based management dashboard. Create and manage buckets, configure access policies, monitor system metrics, and provision IAM users.
+        container: rustfs-server
