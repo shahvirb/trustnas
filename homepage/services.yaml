@@ -1,3 +1,10 @@
+- Monitoring:
+    - Dozzle:
+        icon: mdi-docker
+        href: http://trustnas:8379
+        description: Real-time Docker container log viewer. Monitor all container logs through a clean web UI.
+        container: dozzle
+
 - Tools:
     - Filestash:
         icon: mdi-file-cloud-outline

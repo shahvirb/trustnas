@@ -9,6 +9,7 @@ services:
       - "${NGINX_PUBLIC_PORT:-63778}:80"
       - "${NGINX_GARAGE_PORT:-63779}:80"
       - "${FILESTASH_PORT:-8378}:8378"
+      - "${DOZZLE_PORT:-8379}:8379"
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
@@ -93,4 +94,12 @@ services:
     restart: unless-stopped
     volumes:
       - ${FILESTASH_STATE_PATH:-./docker-data/filestash}:/app/data/state/
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOZZLE_DATA_PATH:-./docker-data/dozzle}:/data
 
