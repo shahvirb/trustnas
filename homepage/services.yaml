@@ -1,4 +1,9 @@
 - Tools:
+    - Filestash:
+        icon: mdi-file-cloud-outline
+        href: http://trustnas:8378
+        description: Web-based file manager for S3 storage. Browse, upload, download, and manage files via Tailscale VPN.
+        container: trustnas-filestash
     - S3 Browser:
         icon: mdi-folder-open-outline
         href: http://trustnas/s3ui/

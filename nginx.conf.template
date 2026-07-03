@@ -6,6 +6,8 @@ http {
     limit_rate_after 0;
     limit_rate ${NGINX_BANDWIDTH_LIMIT};
 
+    resolver 127.0.0.11 valid=30s;
+
     server {
         listen 80;
         client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
@@ -16,7 +18,8 @@ http {
         }
 
         location / {
-            proxy_pass http://garage:3900;
+            set $garage_upstream garage:3900;
+            proxy_pass http://$garage_upstream;
             proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -25,12 +28,16 @@ http {
     }
 
     server {
-        listen 81;
+        listen 8378;
         client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
 
         location / {
-            proxy_pass http://garage:3900;
-            proxy_set_header Host $http_host;
+            set $filestash_upstream filestash:8334;
+            proxy_pass http://$filestash_upstream;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;

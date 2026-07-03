@@ -1,3 +1,5 @@
 homepage/logs/
 nginx_logs/
 .env
+.s3-credentials
+docker-data/

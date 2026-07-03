@@ -7,7 +7,8 @@ services:
       - "${TAILSCALE_HTTPS_PORT:-8334}:8334"
       - "${HOMEPAGE_PORT:-3000}:3000"
       - "${NGINX_PUBLIC_PORT:-63778}:80"
-      - "${NGINX_GARAGE_PORT:-63779}:81"
+      - "${NGINX_GARAGE_PORT:-63779}:80"
+      - "${FILESTASH_PORT:-8378}:8378"
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
@@ -85,4 +86,11 @@ services:
       - ${GARAGE_CONFIG_PATH:-./docker-data/garage/config}:/etc/garage:ro
     command: /garage -c /etc/garage/garage.toml server
     restart: unless-stopped
+
+  filestash:
+    image: machines/filestash:latest
+    container_name: trustnas-filestash
+    restart: unless-stopped
+    volumes:
+      - ${FILESTASH_STATE_PATH:-./docker-data/filestash}:/app/data/state/
 

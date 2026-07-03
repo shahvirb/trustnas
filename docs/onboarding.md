@@ -91,6 +91,17 @@ TrustNAS includes a web-based S3 browser at `/s3ui`:
 
 You can now browse, upload, and download files from your bucket.
 
+## Using Filestash (Web File Manager)
+
+Filestash is an included web file manager with file previews, sharing, and
+drag-and-drop uploads.
+
+1. Open `http://trustnas:8378` in your browser
+2. Log in with:
+   - **Username:** your Key ID
+   - **Password:** your Secret Key
+3. Your bucket appears — browse, upload, and manage files
+
 ## Connecting with rclone
 
 [rclone](https://rclone.org/) is a powerful command-line tool for managing cloud storage:
