@@ -63,7 +63,7 @@ services:
     image: alpine:latest
     container_name: garage-config-init
     volumes:
-      - garage-config:/etc/garage
+      - ${GARAGE_CONFIG_PATH:-./docker-data/garage/config}:/etc/garage
       - ./garage.toml.template:/tmp/garage.toml.template:ro
     environment:
       - GARAGE_RPC_SECRET=${GARAGE_RPC_SECRET}
@@ -81,11 +81,8 @@ services:
     ports:
       - "127.0.0.1:${GARAGE_S3_PORT:-3900}:3900"
     volumes:
-      - garage-data:/var/lib/garage
-      - garage-config:/etc/garage:ro
+      - ${GARAGE_DATA_PATH:-./docker-data/garage/data}:/var/lib/garage
+      - ${GARAGE_CONFIG_PATH:-./docker-data/garage/config}:/etc/garage:ro
     command: /garage -c /etc/garage/garage.toml server
     restart: unless-stopped
 
-volumes:
-  garage-data:
-  garage-config:
