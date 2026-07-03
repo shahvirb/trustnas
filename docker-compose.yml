@@ -24,6 +24,7 @@ services:
       - "${TAILSCALE_HTTPS_PORT:-8334}:8334"
       - "${HOMEPAGE_PORT:-3000}:3000"
       - "${NGINX_PUBLIC_PORT:-63778}:80"
+      - "${NGINX_GARAGE_PORT:-63779}:81"
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
@@ -74,3 +75,35 @@ services:
         nginx -g 'daemon off;'
       "
     restart: unless-stopped
+
+  garage-init:
+    image: alpine:latest
+    container_name: garage-config-init
+    volumes:
+      - garage-config:/etc/garage
+      - ./garage.toml.template:/tmp/garage.toml.template:ro
+    environment:
+      - GARAGE_RPC_SECRET=${GARAGE_RPC_SECRET}
+    command: >
+      sh -c "apk add --no-cache gettext > /dev/null 2>&1 &&
+        envsubst < /tmp/garage.toml.template > /etc/garage/garage.toml &&
+        echo 'Garage config written'"
+
+  garage:
+    image: dxflrs/garage:v1.0.1
+    container_name: garage-server
+    depends_on:
+      garage-init:
+        condition: service_completed_successfully
+    ports:
+      - "${GARAGE_S3_PORT:-3900}:3900"
+      - "${GARAGE_ADMIN_PORT:-3901}:3901"
+    volumes:
+      - garage-data:/var/lib/garage
+      - garage-config:/etc/garage:ro
+    command: /garage -c /etc/garage/garage.toml server
+    restart: unless-stopped
+
+volumes:
+  garage-data:
+  garage-config:

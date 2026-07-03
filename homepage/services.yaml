@@ -27,3 +27,12 @@
         href: http://rustfs-server:9001
         description: Web-based management dashboard. Create and manage buckets, configure access policies, monitor system metrics, and provision IAM users.
         container: rustfs-server
+    - Garage S3 API:
+        icon: si-amazons3
+        href: http://garage-server:3900
+        description: S3-compatible distributed object storage. Lightweight, single-binary, geo-replicated. No web console.
+        container: garage-server
+    - Garage Admin API:
+        icon: mdi-wrench
+        href: http://garage-server:3901/v1/health
+        description: Garage admin and health endpoint. Managed via CLI (docker exec garage-server /garage ...).
