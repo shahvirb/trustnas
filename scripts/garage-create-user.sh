@@ -114,8 +114,8 @@ echo "==> Running bandwidth benchmark (direct to Garage, port 3900)..."
 echo ""
 
 S3_OUTPUT_DIRECT=$(mktemp)
-RUSTFS_ACCESS_KEY="$KEY_ID" \
-    RUSTFS_SECRET_KEY="$KEY_SECRET" \
+S3_ACCESS_KEY="$KEY_ID" \
+    S3_SECRET_KEY="$KEY_SECRET" \
     S3_ENDPOINT="http://localhost:3900" \
     S3_REGION="garage" \
     S3_BENCH_BUCKET="$BUCKET" \
@@ -126,8 +126,8 @@ echo "==> Running bandwidth benchmark (via nginx, port 63779)..."
 echo ""
 
 S3_OUTPUT_NGINX=$(mktemp)
-RUSTFS_ACCESS_KEY="$KEY_ID" \
-    RUSTFS_SECRET_KEY="$KEY_SECRET" \
+S3_ACCESS_KEY="$KEY_ID" \
+    S3_SECRET_KEY="$KEY_SECRET" \
     S3_ENDPOINT="http://localhost:63779" \
     S3_REGION="garage" \
     S3_BENCH_BUCKET="$BUCKET" \

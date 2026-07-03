@@ -18,8 +18,8 @@ load_dotenv(find_dotenv())
 
 ENDPOINT = os.getenv("S3_ENDPOINT", "http://localhost:63778")
 BUCKET = os.getenv("S3_BENCH_BUCKET", "test1")
-ACCESS_KEY = os.environ["RUSTFS_ACCESS_KEY"]
-SECRET_KEY = os.environ["RUSTFS_SECRET_KEY"]
+ACCESS_KEY = os.environ["S3_ACCESS_KEY"]
+SECRET_KEY = os.environ["S3_SECRET_KEY"]
 REGION = os.getenv("S3_REGION", "us-east-1")
 
 TEST_SIZES = [
