@@ -1,7 +1,7 @@
 services:
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: trustnas-tailscale
+    container_name: tailscale
     hostname: ${TAILSCALE_HOSTNAME:-trustnas}
     ports:
       - "${TAILSCALE_HTTPS_PORT:-8334}:8334"
@@ -89,7 +89,7 @@ services:
 
   filestash:
     image: machines/filestash:latest
-    container_name: trustnas-filestash
+    container_name: filestash
     restart: unless-stopped
     volumes:
       - ${FILESTASH_STATE_PATH:-./docker-data/filestash}:/app/data/state/
