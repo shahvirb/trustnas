@@ -3,24 +3,28 @@ set -euo pipefail
 
 usage() {
     cat <<EOF
-Usage: $0 --name <key-name> --bucket <bucket-name>
+Usage: $0 --name <key-name> --bucket <bucket-name> [--quota <size>]
 
 Creates a Garage access key and bucket, grants read/write access,
-then runs bandwidth benchmarks to verify.
+sets a storage quota (default 500MB), then runs bandwidth benchmarks.
 
 Example:
   $0 --name alice --bucket alice-files
+  $0 --name alice --bucket alice-files --quota 1G
+  $0 --name alice --bucket alice-files --quota 0   # unlimited
 EOF
     exit 1
 }
 
 NAME=""
 BUCKET=""
+QUOTA="${GARAGE_DEFAULT_QUOTA:-500MB}"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --name)   NAME="$2";   shift 2 ;;
         --bucket) BUCKET="$2"; shift 2 ;;
+        --quota)  QUOTA="$2";  shift 2 ;;
         *) usage ;;
     esac
 done
@@ -36,6 +40,25 @@ if ! docker inspect garage-server --format '{{.State.Running}}' 2>/dev/null | gr
     echo "  Start it with: docker compose up -d garage"
     exit 1
 fi
+
+parse_size() {
+    local s="$1"
+    s="${s// /}"
+    local num=$(echo "$s" | sed 's/[^0-9.]//g')
+    local unit=$(echo "$s" | sed 's/[0-9.]//g' | tr '[:lower:]' '[:upper:]')
+    case "$unit" in
+        B)   echo "${num%.*}" ;;
+        K|KB) echo $((${num%.*} * 1000)) ;;
+        KI|KIB) echo $((${num%.*} * 1024)) ;;
+        M|MB) echo $((${num%.*} * 1000000)) ;;
+        MI|MIB) echo $((${num%.*} * 1048576)) ;;
+        G|GB) echo $((${num%.*} * 1000000000)) ;;
+        GI|GIB) echo $((${num%.*} * 1073741824)) ;;
+        T|TB) echo $((${num%.*} * 1000000000000)) ;;
+        TI|TIB) echo $((${num%.*} * 1099511627776)) ;;
+        *) echo "$num" ;;
+    esac
+}
 
 echo "==> Creating access key '$NAME'..."
 KEY_OUTPUT=$($GARAGE key create "$NAME" 2>&1 | grep -vE 'INFO|WARN')
@@ -54,7 +77,22 @@ echo "==> Creating bucket '$BUCKET'..."
 $GARAGE bucket create "$BUCKET" 2>&1 | grep -vE 'INFO|WARN' || true
 
 echo "==> Granting read/write access..."
-$GARAGE bucket allow "$BUCKET" --key "$NAME" --read --write 2>&1 | grep -vE 'INFO|WARN' || true
+$GARAGE bucket allow --read --write "$BUCKET" --key "$NAME" 2>&1 | grep -vE 'INFO|WARN' || true
+
+if [[ "$QUOTA" != "0" ]]; then
+    QUOTA_BYTES=$(parse_size "$QUOTA")
+    echo "==> Setting quota: $QUOTA ($QUOTA_BYTES bytes)..."
+    BUCKET_ID=$($GARAGE json-api GetBucketInfo "{\"globalAlias\":\"$BUCKET\"}" 2>/dev/null | grep -oP '"id"\s*:\s*"\K[^"]+')
+    if [[ -z "$BUCKET_ID" ]]; then
+        echo "Warning: could not resolve bucket UUID, skipping quota. Set it manually:"
+        echo "  docker exec garage-server /garage json-api UpdateBucket '{\"id\":\"<bucket-id>\", \"body\":{\"quotas\":{\"maxSize\":$QUOTA_BYTES,\"maxObjects\":null}}}'"
+    else
+        $GARAGE json-api UpdateBucket "{\"id\":\"$BUCKET_ID\", \"body\":{\"quotas\":{\"maxSize\":$QUOTA_BYTES,\"maxObjects\":null}}}" 2>&1 | grep -vE 'INFO|WARN' || true
+        echo "    Quota set successfully."
+    fi
+else
+    echo "==> No quota (unlimited storage)."
+fi
 
 echo ""
 echo "============================================"
@@ -66,6 +104,9 @@ echo " Region:             garage"
 echo " Bucket:             $BUCKET"
 echo " Key ID:             $KEY_ID"
 echo " Secret key:         $KEY_SECRET"
+if [[ "$QUOTA" != "0" ]]; then
+    echo " Quota:              $QUOTA"
+fi
 echo "============================================"
 
 echo ""
@@ -110,5 +151,8 @@ echo "  Region:    garage"
 echo "  Bucket:    $BUCKET"
 echo "  Key ID:    $KEY_ID"
 echo "  Secret:    $KEY_SECRET"
+if [[ "$QUOTA" != "0" ]]; then
+    echo "  Quota:     $QUOTA"
+fi
 
 rm -f "$S3_OUTPUT_DIRECT" "$S3_OUTPUT_NGINX"

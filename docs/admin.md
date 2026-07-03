@@ -26,7 +26,7 @@ TrustNAS is a self-hosted NAS stack built on [Garage](https://garagehq.deuxfleur
 
 | Service | Purpose | Port |
 |---------|---------|------|
-| `garage` | S3 object storage engine | 3900 (S3), 3901 (admin) |
+| `garage` | S3 object storage engine (Garage v2.x) | 3900 (S3, 127.0.0.1 only); admin via docker exec RPC |
 | `tailscale` | Secure mesh VPN | 8334 (HTTPS) |
 | `nginx` | Bandwidth-limited S3 reverse proxy | 80 → rustfs, 81 → garage |
 | `homepage` | Service dashboard | 3000 |
@@ -76,8 +76,8 @@ docker compose up -d
 All services start automatically. Verify health:
 
 ```bash
-# Garage
-curl http://localhost:3901/v1/health
+# Garage (via RPC — no network exposure)
+docker exec garage-server /garage -c /etc/garage/garage.toml json-api GetClusterHealth
 
 # Nginx → Garage route
 curl http://localhost:63779
@@ -113,6 +113,38 @@ Check node health:
 docker exec garage-server /garage -c /etc/garage/garage.toml status
 ```
 
+## Bucket Quotas
+
+Garage v2.3+ supports per-bucket storage quotas, enforced automatically on upload.
+
+### Set a quota
+
+```bash
+# Via the onboarding script (default 500MB):
+./scripts/garage-create-user.sh --name alice --bucket alice-files
+./scripts/garage-create-user.sh --name alice --bucket alice-files --quota 1G
+
+# Manually via json-api (500 MB = 500000000 bytes):
+docker exec garage-server /garage -c /etc/garage/garage.toml json-api UpdateBucket \
+  '{"id":"<bucket-id>", "body":{"quotas":{"maxSize":500000000,"maxObjects":null}}}'
+
+# Remove quota (unlimited):
+docker exec garage-server /garage -c /etc/garage/garage.toml json-api UpdateBucket \
+  '{"id":"<bucket-id>", "body":{"quotas":{"maxSize":null,"maxObjects":null}}}'
+```
+
+### View quota status
+
+```bash
+# Shows current size, object count, and quota status
+docker exec garage-server /garage -c /etc/garage/garage.toml bucket info <bucket-name>
+
+# Or via json-api for machine-readable output
+docker exec garage-server /garage -c /etc/garage/garage.toml json-api GetBucketInfo '{"globalAlias":"<bucket>"}'
+```
+
+The output includes `quotas` (configured limits) and `stats` (current usage: `size` in bytes, `objects` count). Garage rejects uploads that would exceed the configured `maxSize`.
+
 ## Adding Tenants
 
 Use the automated onboarding script:
@@ -125,8 +157,9 @@ This script:
 1. Creates a Garage access key named `alice`
 2. Creates an S3 bucket `alice-files`
 3. Grants the key read/write access to that bucket
-4. Prints credentials
-5. Runs bandwidth benchmarks (direct and via nginx) as verification
+4. Sets a 500MB storage quota on the bucket (configurable with `--quota`)
+5. Prints credentials
+6. Runs bandwidth benchmarks (direct and via nginx) as verification
 
 Share the printed endpoint, key ID, secret key, bucket name, and region with the tenant.
 
@@ -169,16 +202,16 @@ Garage uses a per-key, per-bucket permission model:
 
 ```bash
 # Grant read
-docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow <bucket> --key <key-name> --read
+docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow --read <bucket> --key <key-name>
 
 # Grant write
-docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow <bucket> --key <key-name> --write
+docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow --write <bucket> --key <key-name>
 
 # Grant both
-docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow <bucket> --key <key-name> --read --write
+docker exec garage-server /garage -c /etc/garage/garage.toml bucket allow --read --write <bucket> --key <key-name>
 
 # Revoke all
-docker exec garage-server /garage -c /etc/garage/garage.toml bucket deny <bucket> --key <key-name> --read --write
+docker exec garage-server /garage -c /etc/garage/garage.toml bucket deny --read --write <bucket> --key <key-name>
 
 # Global key permissions (allow creating new buckets)
 docker exec garage-server /garage -c /etc/garage/garage.toml key allow <key-name> --create-bucket
@@ -195,8 +228,8 @@ docker exec garage-server /garage -c /etc/garage/garage.toml status
 # Storage statistics
 docker exec garage-server /garage -c /etc/garage/garage.toml stats
 
-# Health endpoint
-curl http://localhost:3901/v1/health
+# Health check (RPC — no network exposure)
+docker exec garage-server /garage -c /etc/garage/garage.toml json-api GetClusterHealth
 ```
 
 ### Nginx
@@ -237,6 +270,12 @@ docker compose up -d garage
 
 The `garage-init` container will regenerate the config from the template automatically.
 
+When upgrading from v1.x to v2.x:
+- `replication_mode` is replaced by `replication_factor` + `consistency_mode` in the config template.
+- The admin API endpoints changed (prefix no longer used, e.g. `/health` instead of `/v1/health`).
+- CLI commands for access control use positional arguments: `bucket allow --read --write <bucket> --key <key>`.
+- See the full migration guide at https://garagehq.deuxfleurs.fr/documentation/working-documents/migration-2/
+
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
@@ -244,5 +283,6 @@ The `garage-init` container will regenerate the config from the template automat
 | `Error: No such file or directory` | Config not generated | `docker compose up -d garage-init` |
 | `Invalid RPC secret key` | Secret too short | Generate with `openssl rand -hex 32` |
 | `Ring not yet ready` | No layout applied | Run `scripts/garage-init.sh` |
-| `capacity ... too small` | Capacity in wrong units | Use bytes (e.g., `524288000` for 500 MB) |
+| `capacity ... too small` | Capacity in wrong units | Use human-readable units (e.g., `500MB`, `1G`) |
 | `Forbidden: Garage does not support anonymous access` | Expected — no anonymous S3 | Provide valid key/secret credentials |
+| `replication_mode` not recognized | v2 config uses `replication_factor` | Update `garage.toml.template` to use `replication_factor = 1` |
