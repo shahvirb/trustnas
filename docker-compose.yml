@@ -28,7 +28,7 @@ services:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - tailscale-state:/var/lib/tailscale
+      - /home/openmediavault/docker-data/trustnas/tailscale:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
@@ -43,6 +43,7 @@ services:
       - tailscale
     volumes:
       - /home/openmediavault/gitsource/trustnas/homepage/:/app/config
+      - /home/openmediavault/docker-data/trustnas/homepage/logs:/app/config/logs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       HOMEPAGE_ALLOWED_HOSTS: localhost,127.0.0.1,openmediavault,openmediavault:3000
@@ -57,8 +58,6 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./s3browser/:/usr/share/nginx/html/s3ui:ro
-      - ./nginx_logs:/var/log/nginx
+      - /home/openmediavault/docker-data/trustnas/nginx_logs:/var/log/nginx
     restart: unless-stopped
 
-volumes:
-  tailscale-state:
