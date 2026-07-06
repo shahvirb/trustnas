@@ -43,7 +43,7 @@ From `nginx.conf.template`, extract every `listen` directive and its correspondi
 
 For any service reachable through an nginx proxy:
 - The Tailnet URL uses the nginx `listen` port (which is published on the tailscale service), not the backend port.
-- Include the proxy chain in the **Details** column (e.g., "nginx proxies to `filestash:8334`").
+- Include the proxy chain in the **Details** column (e.g., "nginx proxies to `garage:3900`").
 
 If nginx enforces `limit_rate`, note the bandwidth limit in Details or Notes.
 
@@ -59,7 +59,7 @@ A markdown table with columns: Service, Container, Host URL, Tailnet URL, Detail
 
 Identify browser-facing HTTP services. Look for:
 - Containers with `network_mode: "service:tailscale"` that serve HTTP on ports published by the tailscale service (e.g., homepage on 3000).
-- Containers proxied by nginx that serve web interfaces (detected via nginx `proxy_pass` directives, e.g., filestash on 8334 proxied through port 8378, dozzle on 8080 proxied through port 8379).
+- Containers with `network_mode: "service:tailscale"` that serve web interfaces (e.g., filestash on port 8378, dozzle on port 8379).
 
 For each, list the container name, published port, both URLs (using the reachability rule from Step 3), and a brief description of the service based on its image and role.
 

@@ -7,7 +7,7 @@ Reference of all services in the TrustNAS stack, with URLs for local (hostname) 
 | Service | Container | Host URL | Tailnet URL | Details |
 |---------|-----------|----------|-------------|---------|
 | Homepage | `homepage` | http://openmediavault:3000 | http://trustnas.tailc7008.ts.net:3000 | Dashboard UI; shares tailscale network namespace |
-| Filestash | `filestash` | http://openmediavault:8378 | http://trustnas.tailc7008.ts.net:8378 | Web file manager; nginx on port `8378` proxies to `filestash:8334`; bandwidth limited |
+| Filestash | `filestash` | http://openmediavault:8378 | http://trustnas.tailc7008.ts.net:8378 | Web file manager; shares tailscale network namespace; no bandwidth limit |
 | Dozzle | `dozzle` | http://openmediavault:8379 | http://trustnas.tailc7008.ts.net:8379 | Docker log viewer; shares tailscale network namespace; no bandwidth limit |
 | MkDocs | `mkdocs` | http://openmediavault:8000 | http://trustnas.tailc7008.ts.net:8000 | Documentation server (MkDocs Material); shares tailscale network namespace |
 
@@ -35,6 +35,6 @@ Reference of all services in the TrustNAS stack, with URLs for local (hostname) 
   - Port `3901` (Garage Admin): Bound to `127.0.0.1` — internal only, accessible via `docker exec garage-server`.
   - Port `3902` (Garage RPC): Internal cluster communication only.
 
-- **Bandwidth limits:** nginx enforces `limit_rate 6250k` on proxied endpoints — Filestash (`8378`) and Garage S3 via nginx (`63779`). Direct Garage S3 on port `3900` and Dozzle (`8379`) have no bandwidth limit.
+- **Bandwidth limits:** nginx enforces `limit_rate 6250k` on proxied endpoints — Garage S3 via nginx (`63779`). Direct Garage S3 on port `3900` and Dozzle (`8379`) have no bandwidth limit.
 
 - Port `63779` (NGINX_GARAGE_PORT) maps to nginx which proxies to `garage:3900`.

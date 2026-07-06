@@ -95,7 +95,12 @@ services:
   filestash:
     image: machines/filestash:latest
     container_name: filestash
+    network_mode: "service:tailscale"
+    depends_on:
+      - tailscale
     restart: unless-stopped
+    environment:
+      - FILESTASH_PORT=${FILESTASH_PORT:-8378}
     volumes:
       - ${FILESTASH_STATE_PATH:-./docker-data/filestash}:/app/data/state/
 

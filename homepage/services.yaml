@@ -16,7 +16,7 @@
     - Filestash:
         icon: mdi-file-cloud-outline
         href: http://trustnas:8378
-        description: Web-based file manager for S3 storage. Browse, upload, download, and manage files via Tailscale VPN.
+        description: Web app to access and manage TrustNAS S3 files via Tailscale VPN.
         container: filestash
 
 - Bandwidth Limiting:
