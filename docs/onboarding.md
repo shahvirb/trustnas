@@ -17,65 +17,6 @@ From your admin, you'll get:
 
 The nginx endpoint is bandwidth-limited (~6 MB/s). The direct endpoint is uncapped but may not be reachable depending on your network setup.
 
-## Connecting with AWS CLI
-
-Install the [AWS CLI](https://aws.amazon.com/cli/) and configure:
-
-```bash
-aws configure set aws_access_key_id     GK...
-aws configure set aws_secret_access_key f586...
-aws configure set region                garage
-```
-
-Then use `--endpoint` for all commands:
-
-```bash
-# List your buckets
-aws s3 ls --endpoint http://localhost:63779
-
-# List objects in your bucket
-aws s3 ls s3://alice-files --endpoint http://localhost:63779
-
-# Upload a file
-aws s3 cp document.pdf s3://alice-files/ --endpoint http://localhost:63779
-
-# Download a file
-aws s3 cp s3://alice-files/document.pdf . --endpoint http://localhost:63779
-
-# Delete a file
-aws s3 rm s3://alice-files/document.pdf --endpoint http://localhost:63779
-```
-
-## Connecting with Python (boto3)
-
-```bash
-pip install boto3
-```
-
-```python
-import boto3
-from botocore.client import Config
-
-s3 = boto3.client(
-    "s3",
-    endpoint_url="http://localhost:63779",
-    aws_access_key_id="GK...",
-    aws_secret_access_key="f586...",
-    region_name="garage",
-    config=Config(s3={"addressing_style": "path"}),
-)
-
-# List objects
-for obj in s3.list_objects(Bucket="alice-files").get("Contents", []):
-    print(obj["Key"])
-
-# Upload
-s3.put_object(Bucket="alice-files", Key="hello.txt", Body=b"Hello, TrustNAS!")
-
-# Download
-resp = s3.get_object(Bucket="alice-files", Key="hello.txt")
-print(resp["Body"].read().decode())
-```
 
 ## Using Filestash (Web File Manager)
 
@@ -87,52 +28,6 @@ drag-and-drop uploads.
    - **Username:** your Key ID
    - **Password:** your Secret Key
 3. Your bucket appears — browse, upload, and manage files
-
-## Connecting with rclone
-
-[rclone](https://rclone.org/) is a powerful command-line tool for managing cloud storage:
-
-```bash
-rclone config
-# n) New remote
-# name> trustnas
-# s) S3 Compliant
-# provider> Other
-# env_auth> false
-# access_key_id> GK...
-# secret_access_key> f586...
-# region> garage
-# endpoint> http://localhost:63779
-# acl> (leave blank)
-# Edit advanced config? n)
-```
-
-```bash
-# List buckets
-rclone lsd trustnas:
-
-# List files
-rclone ls trustnas:alice-files
-
-# Copy local directory to bucket
-rclone copy ./my-files trustnas:alice-files/
-
-# Sync local directory with bucket
-rclone sync ./my-files trustnas:alice-files/
-```
-
-## Connecting with Cyberduck
-
-[Cyberduck](https://cyberduck.io/) is a graphical S3 client for macOS and Windows:
-
-1. Open Cyberduck → **Open Connection**
-2. Select **Amazon S3** from the dropdown
-3. Enter:
-   - **Server:** `localhost`
-   - **Port:** `63779`
-   - **Access Key ID:** your Key ID
-   - **Secret Access Key:** your secret key
-4. Click **Connect**
 
 ## Bandwidth Limits
 
