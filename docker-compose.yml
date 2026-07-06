@@ -33,7 +33,7 @@ services:
       - ${HOMEPAGE_LOGS_PATH:-./docker-data/homepage/logs}:/app/config/logs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS:-localhost,127.0.0.1,openmediavault,openmediavault:3000,trustnas:3000}
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS:-localhost,127.0.0.1}
     restart: unless-stopped
 
   nginx:
