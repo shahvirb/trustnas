@@ -2,7 +2,6 @@
 # requires-python = ">=3.13"
 # dependencies = [
 #     "boto3>=1.35",
-#     "python-dotenv>=1.0",
 # ]
 # ///
 import os
@@ -12,9 +11,23 @@ from pathlib import Path
 
 import boto3
 from botocore.client import Config
-from dotenv import find_dotenv, load_dotenv
 
-load_dotenv(find_dotenv())
+_REQUIRED_ENV = [
+    "S3_ENDPOINT",
+    "S3_BENCH_BUCKET",
+    "S3_ACCESS_KEY",
+    "S3_SECRET_KEY",
+    "S3_REGION",
+]
+
+_missing = [v for v in _REQUIRED_ENV if not os.environ.get(v)]
+if _missing:
+    print("Missing required environment variables:", file=sys.stderr)
+    for v in _missing:
+        print(f"  {v}", file=sys.stderr)
+    print("\nSet them before running, e.g.:", file=sys.stderr)
+    print("  S3_ENDPOINT=... S3_REGION=... S3_ACCESS_KEY=... S3_SECRET_KEY=... S3_BENCH_BUCKET=... uv run scripts/s3_bench.py", file=sys.stderr)
+    sys.exit(1)
 
 ENDPOINT = os.environ["S3_ENDPOINT"]
 BUCKET = os.environ["S3_BENCH_BUCKET"]
