@@ -17,12 +17,12 @@ Read these files:
 - `.env` — read `TAILSCALE_HOSTNAME` (default: `trustnas` if absent or env does not exist)
 - `.env.example` — fallback for any env var that is unset or missing in `.env`
 
-### 2. Extract the hostname
+### 2. Extract the hostnames
 
-Use `TAILSCALE_HOSTNAME` from `.env` if it exists and is not commented out. Otherwise use `trustnas`.
+Get the **Host URL hostname** by running `hostname` on the system. Get the **Tailnet hostname** from `TAILSCALE_HOSTNAME` in `.env` (unset/commented-out defaults to `trustnas`).
 
 The two addresses for every URL are:
-- **Host:** `http(s)://<TAILSCALE_HOSTNAME>:<PORT>` (e.g., `http://trustnas:3000`)
+- **Host:** `http(s)://<system-hostname>:<PORT>` (e.g., `http://openmediavault:3000`)
 - **Tailnet:** `http(s)://<TAILSCALE_HOSTNAME>.<tailnet-name>:<PORT>` (e.g., `http://trustnas.your-tailnet.ts.net:3000`)
 
 If you cannot determine the tailnet name from the env or config, show `<TAILSCALE_HOSTNAME>` alone for the Tailnet column and note that it is reachable at the host's Tailscale IP or MagicDNS name.
