@@ -33,7 +33,7 @@
 - Storage Engine:
     - Garage S3 API:
         icon: si-amazons3
-        href: http://garage-server:3900
+        href: http://localhost:3900  # depends on GARAGE_S3_PORT
         description: S3-compatible distributed object storage. Lightweight, single-binary, geo-replicated. No web console.
         container: garage-server
     - Garage Admin API:

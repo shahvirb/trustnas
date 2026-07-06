@@ -9,7 +9,7 @@ From your admin, you'll get:
 | Item | Example |
 |------|---------|
 | **Endpoint (nginx)** | `http://localhost:63779` or `https://trustnas:63779` |
-| **Endpoint (direct)** | `http://localhost:3900` |
+| **Endpoint (direct)** | `http://localhost:3900` (default; may differ if admin changed `GARAGE_S3_PORT`) |
 | **Region** | `garage` |
 | **Bucket** | `alice-files` |
 | **Key ID** | `GK...` |
@@ -31,7 +31,7 @@ drag-and-drop uploads.
 
 ## Bandwidth Limits
 
-Traffic through the nginx proxy (port 63779) is capped at ~6 MB/s per connection. This ensures fair sharing between tenants. If you need higher throughput for bulk transfers, ask your admin about direct access on port 3900.
+Traffic through the nginx proxy (port 63779) is capped at ~6 MB/s per connection. This ensures fair sharing between tenants. If you need higher throughput for bulk transfers, ask your admin about direct access (default port 3900, configurable via `GARAGE_S3_PORT`).
 
 ## Support
 

@@ -72,6 +72,7 @@ services:
       - ./garage.toml.template:/tmp/garage.toml.template:ro
     environment:
       - GARAGE_RPC_SECRET=${GARAGE_RPC_SECRET}
+      - GARAGE_S3_PORT=${GARAGE_S3_PORT:-3900}
     command: >
       sh -c "apk add --no-cache gettext > /dev/null 2>&1 &&
         envsubst < /tmp/garage.toml.template > /etc/garage/garage.toml &&
@@ -84,7 +85,7 @@ services:
       garage-init:
         condition: service_completed_successfully
     ports:
-      - "${GARAGE_S3_PORT:-3900}:3900"
+      - "${GARAGE_S3_PORT:-3900}:${GARAGE_S3_PORT:-3900}"
       # - "127.0.0.1:${GARAGE_S3_PORT:-3900}:3900"
     volumes:
       - ${GARAGE_DATA_PATH:-./docker-data/garage/data}:/var/lib/garage

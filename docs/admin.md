@@ -24,7 +24,7 @@ TrustNAS is a self-hosted NAS stack built on [Garage](https://garagehq.deuxfleur
 
 | Service | Purpose | Port |
 |---------|---------|------|
-| `garage` | S3 object storage engine (Garage v2.x) | 3900 (S3, 127.0.0.1 only); admin via docker exec RPC |
+| `garage` | S3 object storage engine (Garage v2.x) | 3900 (S3 default, 127.0.0.1 only); admin via docker exec RPC |
 | `tailscale` | Secure mesh VPN | 8334 (HTTPS) |
 | `nginx` | Bandwidth-limited S3 reverse proxy | 80 → garage |
 | `homepage` | Service dashboard | 3000 |
@@ -43,8 +43,9 @@ Copy `.env.example` to `.env` and configure:
 |----------|---------|-------------|
 | `TS_AUTHKEY` | (required) | Tailscale auth key |
 | `GARAGE_RPC_SECRET` | (required) | Garage cluster secret — generate with `openssl rand -hex 32` |
+| `GARAGE_S3_PORT` | `3900` | Garage S3 API port (container bind + host mapping) |
 | `NGINX_BANDWIDTH_LIMIT` | `6250k` | Per-connection bandwidth cap (~6.1 MB/s) |
-| `NGINX_GARAGE_PORT` | `63779` | Host port for nginx S3 route (proxied to garage:3900) |
+| `NGINX_GARAGE_PORT` | `63779` | Host port for nginx S3 route (proxies to garage:3900) |
 | `TAILSCALE_HOSTNAME` | `trustnas` | Tailscale machine name |
 
 ### Paths

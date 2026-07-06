@@ -98,7 +98,7 @@ echo ""
 echo "============================================"
 echo " Tenant: $NAME"
 echo "============================================"
-echo " Endpoint (direct):  http://localhost:3900"
+echo " Endpoint (direct):  http://localhost:${GARAGE_S3_PORT:-3900}"
 echo " Endpoint (nginx):   http://localhost:63779"
 echo " Region:             garage"
 echo " Bucket:             $BUCKET"
@@ -110,13 +110,13 @@ fi
 echo "============================================"
 
 echo ""
-echo "==> Running bandwidth benchmark (direct to Garage, port 3900)..."
+echo "==> Running bandwidth benchmark (direct to Garage, port ${GARAGE_S3_PORT:-3900})..."
 echo ""
 
 S3_OUTPUT_DIRECT=$(mktemp)
 S3_ACCESS_KEY="$KEY_ID" \
     S3_SECRET_KEY="$KEY_SECRET" \
-    S3_ENDPOINT="http://localhost:3900" \
+    S3_ENDPOINT="http://localhost:${GARAGE_S3_PORT:-3900}" \
     S3_REGION="garage" \
     S3_BENCH_BUCKET="$BUCKET" \
     uv run "$PROJECT_DIR/scripts/s3_bench.py" 2>&1 | tee "$S3_OUTPUT_DIRECT"
@@ -146,7 +146,7 @@ echo "============================================"
 echo ""
 echo "Tenant '$NAME' is ready. Hand these credentials to the user:"
 echo ""
-echo "  Endpoint:  http://localhost:63779  (or direct: http://localhost:3900)"
+echo "  Endpoint:  http://localhost:63779  (or direct: http://localhost:${GARAGE_S3_PORT:-3900})"
 echo "  Region:    garage"
 echo "  Bucket:    $BUCKET"
 echo "  Key ID:    $KEY_ID"

@@ -31,7 +31,7 @@ Reference of all services in the TrustNAS stack, with URLs for local (hostname) 
 - The Tailnet column uses `trustnas.tailc7008.ts.net` (tailnet `tailc7008.ts.net`). Adjust `trustnas` if you override `TAILSCALE_HOSTNAME` in `.env`.
 
 - **N/A (not Tailnet-reachable):**
-  - Port `3900` (Garage S3 direct): Not published on the `tailscale` service. Use `63779` to reach S3 over the Tailnet instead.
+  - Port `3900` (Garage S3 direct): Not published on the `tailscale` service. Use `63779` to reach S3 over the Tailnet instead. Port `3900` is the default value of `GARAGE_S3_PORT`.
   - Port `3901` (Garage Admin): Bound to `127.0.0.1` — internal only, accessible via `docker exec garage-server`.
   - Port `3902` (Garage RPC): Internal cluster communication only.
 
