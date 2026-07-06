@@ -5,6 +5,13 @@
         description: Real-time Docker container log viewer. Monitor all container logs through a clean web UI.
         container: dozzle
 
+- Documentation:
+    - Docs:
+        icon: mdi-book-open-page-variant
+        href: http://trustnas:8000/onboarding/
+        description: Live project documentation. Admin guide, user onboarding, and reference material built with mkdocs-material.
+        container: mkdocs
+
 - Tools:
     - Filestash:
         icon: mdi-file-cloud-outline

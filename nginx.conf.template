@@ -11,11 +11,13 @@ http {
     server {
         listen 80;
         client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
+        absolute_redirect off;
 
         location /s3ui {
             alias /usr/share/nginx/html/s3ui;
             index index.html;
         }
+
 
         location / {
             set $garage_upstream garage:3900;

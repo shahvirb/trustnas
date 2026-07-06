@@ -8,6 +8,7 @@ services:
       - "${HOMEPAGE_PORT:-3000}:3000"
       - "${NGINX_PUBLIC_PORT:-63778}:80"
       - "${NGINX_GARAGE_PORT:-63779}:80"
+      - "${MKDOCS_PORT:-8000}:8000"
       - "${FILESTASH_PORT:-8378}:8378"
       - "${DOZZLE_PORT:-8379}:8379"
     environment:
@@ -102,4 +103,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOZZLE_DATA_PATH:-./docker-data/dozzle}:/data
+
+  mkdocs:
+    image: squidfunk/mkdocs-material
+    container_name: mkdocs
+    network_mode: "service:tailscale"
+    depends_on:
+      - tailscale
+    volumes:
+      - ./:/docs:ro
+    restart: unless-stopped
 
