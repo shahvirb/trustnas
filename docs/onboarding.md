@@ -77,20 +77,6 @@ resp = s3.get_object(Bucket="alice-files", Key="hello.txt")
 print(resp["Body"].read().decode())
 ```
 
-## Using the S3 Browser
-
-TrustNAS includes a web-based S3 browser at `/s3ui`:
-
-1. Open `http://localhost:63778/s3ui` in your browser
-2. Enter your credentials:
-   - **Endpoint:** `http://localhost:63779`
-   - **Access Key:** your Key ID
-   - **Secret Key:** your secret key
-   - **Region:** `garage`
-3. Click **Connect**
-
-You can now browse, upload, and download files from your bucket.
-
 ## Using Filestash (Web File Manager)
 
 Filestash is an included web file manager with file previews, sharing, and

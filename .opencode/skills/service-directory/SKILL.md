@@ -41,7 +41,6 @@ For each web UI service:
 - **Homepage**: container `homepage`, port 3000 — Service dashboard
 - **Filestash**: container `filestash`, port 8378 — Web-based file manager (nginx proxies to filestash:8334)
 - **Dozzle**: container `dozzle`, port 8379 — Real-time Docker container log viewer (nginx proxies to dozzle:8080)
-- **S3 Browser**: container `p2p-nginx`, path `/s3ui` on port 63778 or 63779 — Client-side S3 bucket browser (nginx serves static files from `/usr/share/nginx/html/s3ui`)
 - **Docs (mkdocs)**: container `mkdocs`, port 8000 — Live project documentation (mkdocs runs in tailscale network namespace, exposed directly on port 8000)
 
 #### S3 Endpoints

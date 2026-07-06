@@ -44,7 +44,6 @@ services:
       - tailscale
     volumes:
       - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
-      - ./s3browser/:/usr/share/nginx/html/s3ui:ro
       - ${NGINX_LOGS_PATH:-./docker-data/nginx_logs}:/var/log/nginx
     environment:
       - NGINX_BANDWIDTH_LIMIT=${NGINX_BANDWIDTH_LIMIT:-6250k}

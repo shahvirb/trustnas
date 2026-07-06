@@ -18,11 +18,6 @@
         href: http://trustnas:8378
         description: Web-based file manager for S3 storage. Browse, upload, download, and manage files via Tailscale VPN.
         container: filestash
-    - S3 Browser:
-        icon: mdi-folder-open-outline
-        href: http://trustnas/s3ui/
-        description: Client-side S3 bucket browser. Login with your S3 access key and secret key to browse and download files from your buckets.
-        container: p2p-nginx
 
 - Bandwidth Limiting:
     - S3 Gateway:
