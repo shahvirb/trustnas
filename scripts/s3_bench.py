@@ -16,11 +16,11 @@ from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
 
-ENDPOINT = os.getenv("S3_ENDPOINT", "http://localhost:63778")
-BUCKET = os.getenv("S3_BENCH_BUCKET", "test1")
+ENDPOINT = os.environ["S3_ENDPOINT"]
+BUCKET = os.environ["S3_BENCH_BUCKET"]
 ACCESS_KEY = os.environ["S3_ACCESS_KEY"]
 SECRET_KEY = os.environ["S3_SECRET_KEY"]
-REGION = os.getenv("S3_REGION", "us-east-1")
+REGION = os.environ["S3_REGION"]
 
 TEST_SIZES = [
     (5 * 1024 * 1024, "5 MB", "s3-bench-5mb.bin"),

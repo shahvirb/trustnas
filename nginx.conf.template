@@ -9,12 +9,12 @@ http {
     resolver 127.0.0.11 valid=30s;
 
     server {
-        listen 80;
+        listen ${NGINX_GARAGE_PORT};
         client_max_body_size ${NGINX_CLIENT_MAX_BODY_SIZE};
         absolute_redirect off;
 
         location / {
-            set $garage_upstream garage:3900;
+            set $garage_upstream garage:${GARAGE_S3_PORT};
             proxy_pass http://$garage_upstream;
             proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
@@ -22,6 +22,7 @@ http {
             proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
+
 
     server {
         listen 8378;

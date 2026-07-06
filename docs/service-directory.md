@@ -15,8 +15,7 @@ Reference of all services in the TrustNAS stack, with URLs for local (hostname) 
 
 | Endpoint | Container | Host URL | Tailnet URL | Details |
 |----------|-----------|----------|-------------|---------|
-| Garage S3 (nginx, public) | `p2p-nginx` | http://openmediavault:63778 | http://trustnas.tailc7008.ts.net:63778 | nginx proxies to `garage:3900`; bandwidth limited to 6250k |
-| Garage S3 (nginx, garage) | `p2p-nginx` | http://openmediavault:63779 | http://trustnas.tailc7008.ts.net:63779 | Equivalent to port `63778`; same `garage:3900` upstream; bandwidth limited to 6250k |
+| Garage S3 (nginx) | `p2p-nginx` | http://openmediavault:63779 | http://trustnas.tailc7008.ts.net:63779 | nginx proxies to `garage:3900`; bandwidth limited to 6250k |
 | Garage S3 (direct) | `garage-server` | http://openmediavault:3900 | N/A | Direct S3 API on `garage:3900`; no bandwidth limit; host/LAN only |
 
 ## Infrastructure
@@ -32,10 +31,10 @@ Reference of all services in the TrustNAS stack, with URLs for local (hostname) 
 - The Tailnet column uses `trustnas.tailc7008.ts.net` (tailnet `tailc7008.ts.net`). Adjust `trustnas` if you override `TAILSCALE_HOSTNAME` in `.env`.
 
 - **N/A (not Tailnet-reachable):**
-  - Port `3900` (Garage S3 direct): Not published on the `tailscale` service. Use `63778` or `63779` to reach S3 over the Tailnet instead.
+  - Port `3900` (Garage S3 direct): Not published on the `tailscale` service. Use `63779` to reach S3 over the Tailnet instead.
   - Port `3901` (Garage Admin): Bound to `127.0.0.1` — internal only, accessible via `docker exec garage-server`.
   - Port `3902` (Garage RPC): Internal cluster communication only.
 
-- **Bandwidth limits:** nginx enforces `limit_rate 6250k` on proxied endpoints — Filestash (`8378`) and Garage S3 via nginx (`63778`/`63779`). Direct Garage S3 on port `3900` and Dozzle (`8379`) have no bandwidth limit.
+- **Bandwidth limits:** nginx enforces `limit_rate 6250k` on proxied endpoints — Filestash (`8378`) and Garage S3 via nginx (`63779`). Direct Garage S3 on port `3900` and Dozzle (`8379`) have no bandwidth limit.
 
-- Ports `63778` (NGINX_PUBLIC_PORT) and `63779` (NGINX_GARAGE_PORT) both map to the same nginx `listen 80` server block proxying to `garage:3900`; they serve equivalent content.
+- Port `63779` (NGINX_GARAGE_PORT) maps to nginx which proxies to `garage:3900`.

@@ -6,8 +6,7 @@ services:
     ports:
       - "${TAILSCALE_HTTPS_PORT:-8334}:8334"
       - "${HOMEPAGE_PORT:-3000}:3000"
-      - "${NGINX_PUBLIC_PORT:-63778}:80"
-      - "${NGINX_GARAGE_PORT:-63779}:80"
+      - "${NGINX_GARAGE_PORT:-63779}:${NGINX_GARAGE_PORT:-63779}"
       - "${MKDOCS_PORT:-8000}:8000"
       - "${FILESTASH_PORT:-8378}:8378"
       - "${DOZZLE_PORT:-8379}:${DOZZLE_PORT:-8379}"
@@ -49,6 +48,8 @@ services:
       - NGINX_BANDWIDTH_LIMIT=${NGINX_BANDWIDTH_LIMIT:-6250k}
       - NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
       - NGINX_CLIENT_MAX_BODY_SIZE=${NGINX_CLIENT_MAX_BODY_SIZE:-0}
+      - NGINX_GARAGE_PORT=${NGINX_GARAGE_PORT:-63779}
+      - GARAGE_S3_PORT=${GARAGE_S3_PORT:-3900}
     command: >
       /bin/sh -c "
         apk add --no-cache gettext > /dev/null 2>&1 &&
@@ -56,6 +57,8 @@ services:
           $$NGINX_BANDWIDTH_LIMIT
           $$NGINX_WORKER_CONNECTIONS
           $$NGINX_CLIENT_MAX_BODY_SIZE
+          $$NGINX_GARAGE_PORT
+          $$GARAGE_S3_PORT
         ' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf &&
         nginx -g 'daemon off;'
       "
