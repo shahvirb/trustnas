@@ -10,7 +10,7 @@ services:
       - "${NGINX_GARAGE_PORT:-63779}:80"
       - "${MKDOCS_PORT:-8000}:8000"
       - "${FILESTASH_PORT:-8378}:8378"
-      - "${DOZZLE_PORT:-8379}:8379"
+      - "${DOZZLE_PORT:-8379}:${DOZZLE_PORT:-8379}"
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_STATE_DIR=/var/lib/tailscale
@@ -99,6 +99,10 @@ services:
   dozzle:
     image: amir20/dozzle:latest
     container_name: dozzle
+    network_mode: "service:tailscale"
+    depends_on:
+      - tailscale
+    command: --addr :${DOZZLE_PORT:-8379}
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
