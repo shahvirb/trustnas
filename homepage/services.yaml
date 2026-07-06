@@ -1,28 +1,28 @@
 - Monitoring:
     - Dozzle:
         icon: mdi-docker
-        href: http://trustnas:8379
+        href: http://trustnas.tailc7008.ts.net:8379
         description: Real-time Docker container log viewer. Monitor all container logs through a clean web UI.
         container: dozzle
 
 - Documentation:
     - Docs:
         icon: mdi-book-open-page-variant
-        href: http://trustnas:8000/onboarding/
+        href: http://trustnas.tailc7008.ts.net:8000/onboarding/
         description: Live project documentation. Admin guide, user onboarding, and reference material built with mkdocs-material.
         container: mkdocs
 
 - Tools:
     - Filestash:
         icon: mdi-file-cloud-outline
-        href: http://trustnas:8378
+        href: http://trustnas.tailc7008.ts.net:8378
         description: Web app to access and manage TrustNAS S3 files via Tailscale VPN.
         container: filestash
 
 - Bandwidth Limiting:
     - S3 Gateway:
         icon: si-nginx
-        href: https://trustnas:63779
+        href: https://trustnas.tailc7008.ts.net:63779
         description: Bandwidth-limited S3 reverse proxy (50 Mbps / 6.1 MB/s cap). Routes S3 traffic via Tailscale → Garage.
         container: p2p-nginx
     - S3 Bandwidth Benchmark:

@@ -8,7 +8,7 @@ From your admin, you'll get:
 
 | Item | Example |
 |------|---------|
-| **Endpoint (nginx)** | `http://localhost:63779` or `https://trustnas:63779` |
+| **Endpoint (nginx)** | `http://localhost:63779` or `https://trustnas.tailc7008.ts.net:63779` |
 | **Endpoint (direct)** | `http://localhost:3900` (default; may differ if admin changed `GARAGE_S3_PORT`) |
 | **Region** | `garage` |
 | **Bucket** | `alice-files` |
@@ -23,7 +23,7 @@ The nginx endpoint is bandwidth-limited (~6 MB/s). The direct endpoint is uncapp
 Filestash is an included web file manager with file previews, sharing, and
 drag-and-drop uploads.
 
-1. Open `http://trustnas:8378` in your browser
+1. Open `http://trustnas.tailc7008.ts.net:8378` in your browser
 2. Log in with:
    - **Username:** your Key ID
    - **Password:** your Secret Key
